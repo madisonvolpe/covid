@@ -55,9 +55,10 @@ etl_extract.etl_covid <- function(obj, month, year,...) {
 
   list_covid_df <- purrr::map(links$link, links_to_df)
 
+
   # Always return obj invisibly to ensure pipeability!
-  #invisible(obj)
-  return(list_covid_df)
+  print(list_covid_df)
+  invisible(obj)
 }
 
 # Internal function
