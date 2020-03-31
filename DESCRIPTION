@@ -1,0 +1,18 @@
+Package: covid
+Title: Extract, Transform, and Load COVID-19 Data from Github
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Madison",
+           family = "Volpe",
+           role = c("aut", "cre"),
+           email = "madisonvolpe1@gmail.com",
+           comment = c(ORCID = "0000-0003-1295-2968"))
+Description: What the package does (one paragraph).
+License: What license it uses
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    rvest,
+    etl
+RoxygenNote: 7.1.0
