@@ -13,14 +13,12 @@
 
 etl_transform.etl_covid <- function(obj, ...){
 
-  list.files(attr(obj, "raw_dir"), "\\.csv", full.names = T)
+  files <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = T)
 
-  # csvs <- csvc[grepl(".csv$", csvs)]
-  # csvs <- paste0("./", csvs)
-  #
-  # covid_dfs <- purrr::map(csvs, readr::read_csv)
-  # covid_dfs <- purrr::map(standardize_names)
+  covid_dfs <- purrr::map(files, readr::read_csv)
+  covid_dfs <- purrr::map(covid_dfs,standardize_names)
 
+  print(covid_dfs)
 }
 
 # Internal function
