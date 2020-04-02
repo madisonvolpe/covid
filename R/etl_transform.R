@@ -11,8 +11,16 @@
 #' fill in
 #' @export
 
-etl_transform.etl_covid <- function(.data){
-  return(map(.data, standardize_names))
+etl_transform.etl_covid <- function(obj, ...){
+
+  list.files(attr(obj, "raw_dir"), "\\.csv", full.names = T)
+
+  # csvs <- csvc[grepl(".csv$", csvs)]
+  # csvs <- paste0("./", csvs)
+  #
+  # covid_dfs <- purrr::map(csvs, readr::read_csv)
+  # covid_dfs <- purrr::map(standardize_names)
+
 }
 
 # Internal function

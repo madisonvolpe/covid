@@ -4,7 +4,8 @@
 #' @import etl
 #' @import dplyr
 #' @importFrom lubridate month year
-#' @importFrom purrr keep map
+#' @importFrom purrr keep map set_names
+#' @importFrom readr write_csv
 #' @importFrom  rvest html_nodes html_attr
 #' @importFrom stringr str_extract
 #' @importFrom  xml2 read_html
@@ -19,7 +20,7 @@
 #' are saved in the directory the user specified.
 #' @export
 
-etl_extract.etl_covid <- function(obj, month, year,...) {
+etl_extract.etl_covid <- function(obj, month, year, ...) {
 
   # Specify URL where covid data is stored
   covid_dailyreports <- "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
@@ -53,11 +54,16 @@ etl_extract.etl_covid <- function(obj, month, year,...) {
     warning('Please enter valid month and/or year')
   }
 
-  list_covid_df <- purrr::map(links$link, links_to_df)
 
+  list_covid_df <- purrr::map(links$link, links_to_df) %>% purrr::set_names(links$link_date)
+  list_covid_df %>% names(.) %>% purrr::map(~readr::write_csv(list_covid_df[[.]], paste0(attr(obj, "raw_dir"),"/",.,".csv")))
 
-  # Always return obj invisibly to ensure pipeability!
+  message("Writing the following files as csvs to raw folder in directory specified or raw folder in temp if directory
+          was not specified")
+
+  Sys.sleep(5)
   print(list_covid_df)
+
   invisible(obj)
 }
 
