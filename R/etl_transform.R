@@ -29,10 +29,17 @@ etl_transform.etl_covid <- function(obj, ...){
   covid_dfs <- purrr::map(covid_dfs, ~purrr::map_df(.x, ~stringr::str_replace_all(., "'", "")))
   covid_dfs <- purrr::map(covid_dfs, cleaning_covid_datasets)
 
+  # Keeping only relevant columns (province_state, country_region, last_update, confirmed, recovered, deaths)
+  covid_dfs <- purrr::map(covid_dfs, ~dplyr::select(.x, province_state, country_region, last_update,
+                                                    confirmed, deaths, recovered))
+
   # Saving transformed files to load folder in directory or temp directory
   covid_dfs %>% names(.) %>% purrr::map(~readr::write_csv(covid_dfs[[.]], paste0(attr(obj, "load_dir"),"/",.,".csv")))
 
-  return(covid_dfs)
+  Sys.sleep(5)
+  print(covid_dfs)
+
+  invisible(obj)
 
 }
 
