@@ -10,6 +10,10 @@
 \item{obj}{an \code{\link[etl]{etl}} object}
 
 \item{...}{arguments passed to methods}
+
+\item{month}{fill in}
+
+\item{year}{fill in}
 }
 \description{
 etl_transform.etl_covid
