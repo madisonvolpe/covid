@@ -15,4 +15,8 @@ etl_load.etl_covid <- function(obj, ...){
   files <- list.files(attr(obj, "load_dir"), "\\.csv", full.names = T)
   transformed_dfs <- purrr::map(files, readr::read_csv) %>% set_names(map_chr(files, ~str_extract(.x, "\\d{4}\\-\\d{2}\\-\\d{2}")))
 
+  transformed_all <- bind_rows(transformed_dfs)
+
+  return(transformed_all)
+
 }
