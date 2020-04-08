@@ -1,8 +1,8 @@
 #' Scrape COVID-19 Daily Reports from Github
 #' @description \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
 #' Arguments, such as month and year let users obtain data for a specified time period.
-#' When month and year are not specified all data is scraped from the repo. The downloaded
-#' datsets are saved in the folder the user specified or in the temp folder if no
+#' When month and/or year are not specified all data is scraped from the repo. The downloaded
+#' datsets are saved in the folder that the user specified or in the temp folder if no
 #' folder was specified.
 #' @rdname etl_extract.etl_covid
 #' @method etl_extract etl_covid
