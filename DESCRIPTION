@@ -13,6 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     dplyr,
+    etl,
     rvest,
-    etl
 RoxygenNote: 7.1.0

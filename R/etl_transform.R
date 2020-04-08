@@ -71,11 +71,8 @@ standardize_names <- function(df){
 # Internal function 2
 
 #' Cleaning all covid dfs to make them acceptable for loading to a SQL database
-#'  @param df takes a df and cleans it
-#'  cleaning includes removing apostrophes
-#'  converting dates
-#'  converting numeric
-#'  @noRd
+#' @param df takes a df and cleans it
+#' @noRd
 
 cleaning_covid_datasets <- function(df){
 
