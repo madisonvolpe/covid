@@ -4,7 +4,7 @@
 \alias{etl_transform.etl_covid}
 \title{etl_transform.etl_covid}
 \usage{
-\method{etl_extract}{etl_covid}(obj, ...)
+\method{etl_transform}{etl_covid}(obj, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}

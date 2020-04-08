@@ -1,7 +1,7 @@
 #' Scrape COVID-19 Daily Reports from Github
 #' @description \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
-#' Arguments, such as month and year let users obtain data for a specified time period.
-#' When month and/or year are not specified all data is scraped from github. The downloaded
+#' Arguments, such as month, day, and year let users obtain data for a specified time period.
+#' When no arguments are specified then all available data is scraped from github. The downloaded
 #' datsets are then saved in the folder that the user specified or in the temp folder if no
 #' folder was specified.
 #' @rdname etl_extract.etl_covid
@@ -17,6 +17,8 @@
 #' @inheritParams etl::etl_extract
 #' @param month
 #' numeric vector specifying month(s)
+#' @param day
+#' numeric vector specifying day(s)
 #' @param year
 #' numeric vector specifying year(s)
 #' @examples
@@ -31,7 +33,7 @@
 #'
 #' @export
 
-etl_extract.etl_covid <- function(obj, month, year, ...) {
+etl_extract.etl_covid <- function(obj, month, day, year, ...) {
 
   # Specify URL where covid data is stored
   covid_dailyreports <- "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports"
@@ -49,17 +51,36 @@ etl_extract.etl_covid <- function(obj, month, year, ...) {
   links <- data.frame(link = links, stringsAsFactors = FALSE)
   links <- dplyr::mutate(links, link_date = lubridate::mdy(stringr::str_extract(link, "\\d{2}-\\d{2}-\\d{4}")))
 
-  if(missing(month) & missing(year)){
+  if(missing(month) & missing(day) & missing(year)){
 
     links <- links
 
-  } else if (missing(year)) {
+  } else if (missing(day) & missing(year)) {
 
     links <- dplyr::filter(links, lubridate::month(link_date) %in% month)
 
-  } else {
+  } else if(missing(month) & missing(day)) {
 
     links <- dplyr::filter(links, lubridate::year(link_date) %in% year)
+
+  } else if(missing(month) & missing(year)){
+
+    links <- dplyr::filter(links, lubridate::day(link_date) %in% day)
+
+  } else if(missing(day)){
+
+    links <- dplyr::filter(links, lubridate::month(link_date) %in% month &
+                             lubridate::year(link_date) %in% year)
+
+  } else if(missing(year)){
+
+    links <- dplyr::filter(links, lubridate::month(link_date) %in% month &
+                             lubridate::day(link_date) %in% day)
+
+  } else {
+
+    links <- dplyr::filter(links, lubridate::day(link_date) %in% day &
+                             lubridate::year(link_date) %in% year)
 
   }
 

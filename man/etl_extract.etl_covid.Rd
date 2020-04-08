@@ -4,12 +4,14 @@
 \alias{etl_extract.etl_covid}
 \title{Scrape COVID-19 Daily Reports from Github}
 \usage{
-\method{etl_extract}{etl_covid}(obj, month, year, ...)
+\method{etl_extract}{etl_covid}(obj, month, day, year, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
 
 \item{month}{numeric vector specifying month(s)}
+
+\item{day}{numeric vector specifying day(s)}
 
 \item{year}{numeric vector specifying year(s)}
 
@@ -17,8 +19,8 @@
 }
 \description{
 \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
-Arguments, such as month and year let users obtain data for a specified time period.
-When month and/or year are not specified all data is scraped from github. The downloaded
+Arguments, such as month, day, and year let users obtain data for a specified time period.
+When no arguments are specified then all available data is scraped from github. The downloaded
 datsets are then saved in the folder that the user specified or in the temp folder if no
 folder was specified.
 }
