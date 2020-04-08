@@ -1,6 +1,6 @@
 #' etl_transform.etl_covid
 #' @rdname etl_transform.etl_covid
-#' @method etl_extract etl_covid
+#' @method etl_transform etl_covid
 #' @import etl
 #' @import dplyr
 #' @importFrom purrr map
