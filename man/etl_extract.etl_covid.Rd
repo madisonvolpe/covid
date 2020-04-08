@@ -18,7 +18,18 @@
 \description{
 \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
 Arguments, such as month and year let users obtain data for a specified time period.
-When month and/or year are not specified all data is scraped from the repo. The downloaded
-datsets are saved in the folder that the user specified or in the temp folder if no
+When month and/or year are not specified all data is scraped from github. The downloaded
+datsets are then saved in the folder that the user specified or in the temp folder if no
 folder was specified.
+}
+\examples{
+
+covid_dat <- etl("covid")
+
+covid_dat \%>\% etl_transform()
+
+covid_dat \%>\% etl_transform(month = 4, year = 2020)
+
+covid_dat \%>\% etl_transform(month = c(3,4), year = 2020)
+
 }
