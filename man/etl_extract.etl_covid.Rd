@@ -2,25 +2,23 @@
 % Please edit documentation in R/etl_extract.R
 \name{etl_extract.etl_covid}
 \alias{etl_extract.etl_covid}
-\title{etl_extract.etl_covid}
+\title{Scrape COVID-19 Daily Reports from Github}
 \usage{
 \method{etl_extract}{etl_covid}(obj, month, year, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
 
-\item{month}{fill in}
+\item{month}{numeric vector specifying month(s)}
 
-\item{year}{fill in}
+\item{year}{numeric vector specifying year(s)}
 
 \item{...}{arguments passed to methods}
 }
 \description{
-etl_extract.etl_covid
-}
-\details{
-This function obtains the daily reports of COVID-19 from the John Hopkins CSSE repo.
-Users can specify the month and year they would like to obtain data for. However,
-all data is pulled when no arguments are specified. The downloaded dataframes
-are saved in the directory the user specified.
+\code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
+Arguments, such as month and year let users obtain data for a specified time period.
+When month and year are not specified all data is scraped from the repo. The downloaded
+datsets are saved in the folder the user specified or in the temp folder if no
+folder was specified.
 }

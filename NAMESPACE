@@ -3,7 +3,6 @@
 S3method(etl_extract,etl_covid)
 import(dplyr)
 import(etl)
-importFrom(....,)
 importFrom(lubridate,month)
 importFrom(lubridate,year)
 importFrom(purrr,keep)

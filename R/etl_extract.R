@@ -1,4 +1,9 @@
-#' etl_extract.etl_covid
+#' Scrape COVID-19 Daily Reports from Github
+#' @description \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
+#' Arguments, such as month and year let users obtain data for a specified time period.
+#' When month and year are not specified all data is scraped from the repo. The downloaded
+#' datsets are saved in the folder the user specified or in the temp folder if no
+#' folder was specified.
 #' @rdname etl_extract.etl_covid
 #' @method etl_extract etl_covid
 #' @import etl
@@ -11,13 +16,9 @@
 #' @importFrom  xml2 read_html
 #' @inheritParams etl::etl_extract
 #' @param month
-#' fill in
+#' numeric vector specifying month(s)
 #' @param year
-#' fill in
-#' @details This function obtains the daily reports of COVID-19 from the John Hopkins CSSE repo.
-#' Users can specify the month and year they would like to obtain data for. However,
-#' all data is pulled when no arguments are specified. The downloaded dataframes
-#' are saved in the directory the user specified.
+#' numeric vector specifying year(s)
 #' @export
 
 etl_extract.etl_covid <- function(obj, month, year, ...) {
@@ -42,9 +43,13 @@ etl_extract.etl_covid <- function(obj, month, year, ...) {
 
     links <- links
 
+  } else if (missing(year)) {
+
+    links <- dplyr::filter(links, lubridate::month(link_date) %in% month)
+
   } else {
 
-    links <- dplyr::filter(links, lubridate::month(link_date) %in% month & lubridate::year(link_date) %in% year)
+    links <- dplyr::filter(links, lubridate::year(link_date) %in% year)
 
   }
 

@@ -3,7 +3,7 @@
 #' @method etl_extract etl_covid
 #' @import etl
 #' @import dplyr
-#' @importFrom ....
+#' @importFrom purrr map
 #' @inheritParams etl::etl_transform
 #' @param month
 #' @param year
