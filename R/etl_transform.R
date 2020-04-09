@@ -23,7 +23,7 @@
 #' fill in
 #' @export
 
-etl_transform.etl_covid <- function(obj, ...){
+etl_transform.etl_covid <- function(obj, month, day, year, ...){
 
   # Reading in
 
@@ -31,6 +31,42 @@ etl_transform.etl_covid <- function(obj, ...){
   # or from temp directory in initial etl call
   files <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = T)
   covid_dfs <- purrr::map(files, readr::read_csv) %>% set_names(map_chr(files, ~str_extract(.x, "\\d{4}\\-\\d{2}\\-\\d{2}")))
+
+  # To select dfs to transform
+  nms_covid_dfs <- names(covid_dfs)
+
+  if(missing(month) & missing(day) & missing(year)){
+
+    covid_dfs <- covid_dfs
+
+  } else if (missing(day) & missing(year)) {
+
+    covid_dfs <- covid_dfs[lubridate::month(nms_covid_dfs) %in% month]
+
+  } else if(missing(month) & missing(day)) {
+
+    covid_dfs <- covid_dfs[lubridate::year(nms_covid_dfs) %in% year]
+
+  } else if(missing(month) & missing(year)){
+
+    covid_dfs <- covid_dfs[lubridate::day(nms_covid_dfs) %in% day]
+
+  } else if(missing(day)){
+
+    covid_dfs <- covid_dfs[lubridate::month(nms_covid_dfs) %in% month &
+                             lubridate::year(nms_covid_dfs) %in% year]
+
+  } else if(missing(year)){
+
+    covid_dfs <- covid_dfs[lubridate::month(nms_covid_dfs) %in% month &
+                           lubridate::day(nms_covid_dfs) %in% day]
+
+  } else {
+
+    covid_dfs <- covid_dfs[lubridate::day(nms_covid_dfs) %in% day &
+                           lubridate::year(nms_covid_dfs) %in% year]
+  }
+
 
   # Cleaning
 
