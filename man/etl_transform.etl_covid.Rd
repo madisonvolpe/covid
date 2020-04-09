@@ -2,7 +2,7 @@
 % Please edit documentation in R/etl_transform.R
 \name{etl_transform.etl_covid}
 \alias{etl_transform.etl_covid}
-\title{etl_transform.etl_covid}
+\title{Transform COVID-19 Data to be Uploaded into SQL Database}
 \usage{
 \method{etl_transform}{etl_covid}(obj, ...)
 }
@@ -16,8 +16,16 @@
 \item{year}{fill in}
 }
 \description{
-etl_transform.etl_covid
-}
-\details{
-fill in
+\code{etl_transform} takes files saved in the \emph{raw} folder
+from \code{etl_extract} and transforms them into usable datasets to be uploaded
+into a SQL database. After transformation, files are saved in the \emph{load}
+folder within the specified directory or the temp directory if the user did
+not specify a directory. Under the hood, \code{etl_transform} cleans datasets
+by standardizing colummn names and removing unnecessary punctuation. Most
+importantly the the function only selects relevant columns: province/state,
+country/region, last_update, confirmed, deaths, and recovered. Arguments,
+such as month, day, and year let users transform data for a specified
+time period. When no arguments are specified then all data saved
+in the \emph{raw} folder will be transformed and saved in the
+\emph{load} folder.
 }

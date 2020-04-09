@@ -2,8 +2,9 @@
 #' @description \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
 #' Arguments, such as month, day, and year let users obtain data for a specified time period.
 #' When no arguments are specified then all available data is scraped from github. The downloaded
-#' datsets are then saved in the folder that the user specified or in the temp folder if no
-#' folder was specified.
+#' datsets are then saved as csvs in the \emph{raw} folder within the directory that the user specified.
+#' If no directory was specified then the files are saved in the \emph{raw} folder within the temp
+#' directory that was created.
 #' @rdname etl_extract.etl_covid
 #' @method etl_extract etl_covid
 #' @import etl

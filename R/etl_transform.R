@@ -1,4 +1,16 @@
-#' etl_transform.etl_covid
+#' Transform COVID-19 Data to be Uploaded into SQL Database
+#' @description \code{etl_transform} takes files saved in the \emph{raw} folder
+#' from \code{etl_extract} and transforms them into usable datasets to be uploaded
+#' into a SQL database. After transformation, files are saved in the \emph{load}
+#' folder within the specified directory or the temp directory if the user did
+#' not specify a directory. Under the hood, \code{etl_transform} cleans datasets
+#' by standardizing colummn names and removing unnecessary punctuation. Most
+#' importantly the the function only selects relevant columns: province/state,
+#' country/region, last_update, confirmed, deaths, and recovered. Arguments,
+#' such as month, day, and year let users transform data for a specified
+#' time period. When no arguments are specified then all data saved
+#' in the \emph{raw} folder will be transformed and saved in the
+#' \emph{load} folder.
 #' @rdname etl_transform.etl_covid
 #' @method etl_transform etl_covid
 #' @import etl
@@ -8,8 +20,6 @@
 #' @param month
 #' fill in
 #' @param year
-#' fill in
-#' @details
 #' fill in
 #' @export
 
