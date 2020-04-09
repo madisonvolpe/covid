@@ -4,16 +4,18 @@
 \alias{etl_transform.etl_covid}
 \title{Transform COVID-19 Data to be Uploaded into SQL Database}
 \usage{
-\method{etl_transform}{etl_covid}(obj, ...)
+\method{etl_transform}{etl_covid}(obj, month, day, year, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
 
+\item{month}{numeric vector specifying month(s)}
+
+\item{day}{numeric vector specifying day(s)}
+
+\item{year}{numeric vector specifying year(s)}
+
 \item{...}{arguments passed to methods}
-
-\item{month}{fill in}
-
-\item{year}{fill in}
 }
 \description{
 \code{etl_transform} takes files saved in the \emph{raw} folder

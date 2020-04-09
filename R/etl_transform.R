@@ -16,11 +16,15 @@
 #' @import etl
 #' @import dplyr
 #' @importFrom purrr map
+#' @importFrom lubridate month day year
+#' @importFrom stringr str_extract str_replace_all
 #' @inheritParams etl::etl_transform
 #' @param month
-#' fill in
+#' numeric vector specifying month(s)
+#' @param day
+#' numeric vector specifying day(s)
 #' @param year
-#' fill in
+#' numeric vector specifying year(s)
 #' @export
 
 etl_transform.etl_covid <- function(obj, month, day, year, ...){
