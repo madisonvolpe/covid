@@ -90,10 +90,11 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 
    transformed_all_sql <- row_to_sql(transformed_all)
 
-   transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
-                                " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
+   # transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
+   #                              " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
 
-  # Connect to sql db to load data
+   transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
+                                       " ON CONFLICT (admin, province_state, country_region, last_update) DO NOTHING;")
 
    DBI::dbSendQuery(db_con, transformed_all_sql_query)
 
