@@ -7,7 +7,7 @@
 #'
 
 
-etl_load.etl_covid <- function(obj, month, day, year, ...){
+etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 
   # Reading In
   files <- list.files(attr(obj, "load_dir"), "\\.csv", full.names = T)
@@ -90,10 +90,14 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
 
    transformed_all_sql <- row_to_sql(transformed_all)
 
-   transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
+   transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
                                 " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
 
-  return(transformed_all_sql_query)
+  # Connect to sql db to load data
+
+   DBI::dbSendQuery(db_con, transformed_all_sql_query)
+
+   invisible(obj)
 
 }
 
