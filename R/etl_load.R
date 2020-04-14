@@ -5,7 +5,6 @@
 #' @import dplyr
 #' @inheritParams etl::etl_load
 #'
-#'
 
 
 etl_load.etl_covid <- function(obj, month, day, year, ...){
@@ -68,7 +67,7 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
    transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
                                " ON CONFLICT (province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
 
-  return(transformed_all_sql_query)
+  return(transformed_all)
 
 }
 

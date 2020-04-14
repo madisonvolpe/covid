@@ -87,9 +87,8 @@ etl_transform.etl_covid <- function(obj, month, day, year, ...){
   covid_dfs <- purrr::map(covid_dfs, ~purrr::map_df(.x, ~stringr::str_replace_all(., "'", "")))
   covid_dfs <- purrr::map(covid_dfs, cleaning_covid_datasets)
 
-  # Keeping only relevant columns (province_state, country_region, last_update, confirmed, recovered, deaths)
-  covid_dfs <- purrr::map(covid_dfs, ~dplyr::select(.x, province_state, country_region, last_update,
-                                                    confirmed, deaths, recovered))
+  # Keeping only relevant columns (admin, province_state, country_region, last_update, confirmed, recovered, deaths)
+  covid_dfs <- purrr::map(covid_dfs, select_covid_cols)
 
   # Saving transformed files to load folder in directory or temp directory
   covid_dfs %>% names(.) %>% purrr::map(~readr::write_csv(covid_dfs[[.]], paste0(attr(obj, "load_dir"),"/",.,".csv")))
@@ -115,8 +114,10 @@ standardize_names <- function(df){
   names_df <- tolower(names_df)
   names_df <- stringr::str_replace(names_df,"\\/", "_")
   names_df <- stringr::str_replace(names_df,"_$", "")
+  names_df <- stringr::str_remove(names_df, "[[:digit:]]$")
   names_df <- trimws(names_df)
   names_df <- stringr::str_replace(names_df, "\\s+", "_")
+  names_df <- trimws(names_df)
 
   names_df[grepl("^lat", names_df)] <- "lat"
   names_df[grepl("^long", names_df)] <- "long"
@@ -143,3 +144,28 @@ cleaning_covid_datasets <- function(df){
   return(df)
 }
 
+# Internal function 3
+#' Selecting Relevant columns
+#' @param df takes df and selects columns
+#' @noRd
+
+select_covid_cols <- function(df){
+
+  nms <- names(df)
+
+  if("admin" %in% nms){
+
+    return_df <- dplyr::select(df, admin,province_state,
+                               country_region, last_update,
+                               confirmed, deaths, recovered)
+
+  } else {
+
+    return_df <- dplyr::select(df, province_state, country_region,
+                               last_update, confirmed, deaths, recovered)
+
+  }
+
+  return(return_df)
+
+}
