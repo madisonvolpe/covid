@@ -43,6 +43,12 @@ etl_transform.etl_covid <- function(obj, month, day, year, ...){
 
     covid_dfs <- covid_dfs
 
+  }else if (!missing(month) & !missing(day) & !missing(year)){
+
+      covid_dfs <- covid_dfs[lubridate::month(nms_covid_dfs) %in% month &
+                               lubridate::day(nms_covid_dfs) %in% day &
+                               lubridate::year(nms_covid_dfs) %in% year]
+
   } else if (missing(day) & missing(year)) {
 
     covid_dfs <- covid_dfs[lubridate::month(nms_covid_dfs) %in% month]

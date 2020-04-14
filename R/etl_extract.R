@@ -56,6 +56,12 @@ etl_extract.etl_covid <- function(obj, month, day, year, ...) {
 
     links <- links
 
+  } else if (!missing(month) & !missing(day) & !missing(year)){
+
+    links <- dplyr::filter(links, lubridate::month(link_date) %in% month &
+                           lubridate::day(link_date) %in% day &
+                           lubridate::year(link_date) %in% year)
+
   } else if (missing(day) & missing(year)) {
 
     links <- dplyr::filter(links, lubridate::month(link_date) %in% month)
