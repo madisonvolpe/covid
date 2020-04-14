@@ -11,12 +11,31 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
 
   # Reading In
   files <- list.files(attr(obj, "load_dir"), "\\.csv", full.names = T)
-  transformed_dfs <- purrr::map(files, readr::read_csv,
-                                col_types = cols(col_character(), col_character(),
-                                                 col_character(), col_integer(),
-                                                 col_integer(), col_integer())) %>%
-    set_names(map_chr(files, ~str_extract(.x, "\\d{4}\\-\\d{2}\\-\\d{2}")))
 
+  transformed_dfs <- list()
+
+  for(i in 1:length(files)){
+
+    if(lubridate::ymd(str_extract(files[i], "\\d{4}\\-\\d{2}\\-\\d{2}")) < lubridate::ymd("2020-03-22")){
+
+      transformed_dfs[[i]] <- readr::read_csv(files[i], col_types = cols(col_character(), col_character(),
+                                                                         col_character(), col_integer(),
+                                                                         col_integer(), col_integer()))
+
+    } else {
+
+      transformed_dfs[[i]] <- readr::read_csv(files[i], col_types = cols(col_character(), col_character(),
+                                                                         col_character(), col_character(),
+                                                                         col_integer(), col_integer(),
+                                                                         col_integer()))
+
+    }
+
+  }
+
+
+
+  transformed_dfs <- transformed_dfs %>% purrr::set_names(map_chr(files, ~str_extract(.x, "\\d{4}\\-\\d{2}\\-\\d{2}")))
 
   # Selecting data to load based on date parameters
   nms_transformed_dfs <- names(transformed_dfs)
@@ -24,6 +43,12 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
   if(missing(month) & missing(day) & missing(year)){
 
     transformed_dfs <- transformed_dfs
+
+  } else if (!missing(month) & !missing(day) & !missing(year)){
+
+    transformed_dfs <- transformed_dfs[lubridate::month(nms_transformed_dfs) %in% month &
+                                       lubridate::day(nms_transformed_dfs) %in% day &
+                                       lubridate::year(nms_transformed_dfs) %in% year]
 
   } else if (missing(day) & missing(year)) {
 
@@ -54,20 +79,20 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
   }
 
   # Take list of dfs and make one big dataframe
-  transformed_all <- do.call("rbind",transformed_dfs)
+  transformed_all <- plyr::rbind.fill(transformed_dfs)
 
   # Apply functions to transform df into SQL statement
-
-   transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
-   transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
-   transformed_all <- constraint_blank(transformed_all, "province_state")
-
-   transformed_all_sql <- row_to_sql(transformed_all)
-
-   transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
-                               " ON CONFLICT (province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
-
-  return(transformed_all)
+#
+#    transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
+#    transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
+#    transformed_all <- constraint_blank(transformed_all, "province_state")
+#
+#    transformed_all_sql <- row_to_sql(transformed_all)
+#
+#    transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
+#                                " ON CONFLICT (province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
+#
+    return(transformed_all)
 
 }
 
