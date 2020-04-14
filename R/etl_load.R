@@ -80,19 +80,20 @@ etl_load.etl_covid <- function(obj, month, day, year, ...){
 
   # Take list of dfs and make one big dataframe
   transformed_all <- plyr::rbind.fill(transformed_dfs)
+  transformed_all <- dplyr::select(transformed_all, admin, province_state, country_region, confirmed, deaths, recovered)
 
   # Apply functions to transform df into SQL statement
-#
-#    transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
-#    transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
-#    transformed_all <- constraint_blank(transformed_all, "province_state")
-#
-#    transformed_all_sql <- row_to_sql(transformed_all)
-#
-#    transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
-#                                " ON CONFLICT (province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
-#
-    return(transformed_all)
+
+   transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
+   transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
+   transformed_all <- constraint_blank(transformed_all, "admin|province_state")
+
+   transformed_all_sql <- row_to_sql(transformed_all)
+
+   transformed_all_sql_query <- paste0("INSERT INTO covid_data VALUES ", transformed_all_sql,
+                                " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
+
+  return(transformed_all_sql_query)
 
 }
 
