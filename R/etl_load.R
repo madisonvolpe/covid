@@ -80,7 +80,7 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 
   # Take list of dfs and make one big dataframe
   transformed_all <- plyr::rbind.fill(transformed_dfs)
-  transformed_all <- dplyr::select(transformed_all, admin, province_state, country_region, confirmed, deaths, recovered)
+  transformed_all <- dplyr::select(transformed_all, admin, province_state, country_region, last_update, confirmed, deaths, recovered)
 
   # Apply functions to transform df into SQL statement
 
@@ -98,7 +98,6 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
    DBI::dbSendQuery(db_con, transformed_all_sql_query)
 
    invisible(obj)
-
 }
 
 # Internal function 1
