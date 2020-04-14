@@ -4,7 +4,7 @@
 \alias{etl_load.etl_covid}
 \title{Load Covid-19 Data into PostgreSQL Database}
 \usage{
-\method{etl_load}{etl_covid}(obj, ...)
+\method{etl_load}{etl_covid}(obj, db_con, month, day, year, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}

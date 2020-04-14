@@ -4,7 +4,7 @@
 #' @import etl
 #' @import dplyr
 #' @inheritParams etl::etl_load
-#'
+#' @export
 
 
 etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
