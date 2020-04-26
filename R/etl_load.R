@@ -106,23 +106,22 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 
   # Apply functions to transform df into SQL statement
 
-   # transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
-   # transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
-   # transformed_all <- constraint_blank(transformed_all, "admin|province_state")
-   #
-   # transformed_all_sql <- row_to_sql(transformed_all)
-   #
-   # # transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
-   # #                              " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
-   #
+   transformed_all <- purrr::map_df(transformed_all, na_blank_tonull)
+   transformed_all <- purrr::map_df(transformed_all, quote_to_sql)
+   transformed_all <- constraint_blank(transformed_all, "admin|province_state")
+
+   transformed_all_sql <- row_to_sql(transformed_all)
+
+   transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
+                                " ON CONFLICT (admin, province_state, country_region, last_update) DO UPDATE SET confirmed = EXCLUDED.confirmed, deaths = EXCLUDED.deaths, recovered = EXCLUDED.recovered;")
+
    # transformed_all_sql_query <- paste0("INSERT INTO covid_stats VALUES ", transformed_all_sql,
    #                                     " ON CONFLICT (admin, province_state, country_region, last_update) DO NOTHING;")
-   #
-   # DBI::dbSendQuery(db_con, transformed_all_sql_query)
-   #
-   # invisible(obj)
 
-  return(transformed_all)
+   DBI::dbSendQuery(db_con, transformed_all_sql_query)
+
+   invisible(obj)
+
 }
 
 # Internal function 1
