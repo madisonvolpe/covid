@@ -177,7 +177,7 @@ quote_to_sql <- function(col){
     if(is.element(col[i], "NULL")){
       col[i] <- col[i]
     } else {
-      col[i] <- paste("'", col[i], "'")
+      col[i] <- paste("'", col[i], "'", sep = "")
     }
   }
   return(col)
@@ -193,8 +193,8 @@ quote_to_sql <- function(col){
 row_to_sql <- function(df){
 
   trans1 <- apply(df, 1, function(x) paste0(x, collapse = ","))
-  trans2 <- paste0("(", trans1, ")")
-  trans3 <- paste0(trans2, collapse = ",")
+  trans2 <- paste0("(", trans1, ")", sep = "")
+  trans3 <- paste0(trans2, collapse = ",", sep = "")
 
   return(trans3)
 
