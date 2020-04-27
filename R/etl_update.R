@@ -8,7 +8,7 @@
 
 
 
-etl_update.default <- function(obj, month, day, year, db_con) {
+etl_update.etl_covid <- function(obj, month, day, year, db_con) {
 
   obj <- obj %>%
     etl_extract(...) %>%
