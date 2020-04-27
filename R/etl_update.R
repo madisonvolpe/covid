@@ -6,16 +6,16 @@
 #' @inheritParams etl::etl_update
 #' @export
 
-etl_update <- function(obj, ...) UseMethod("etl_update")
 
-#' @rdname etl_create
-#' @method etl_update default
-#' @export
 
-etl_update.default <- function(obj, ...) {
+etl_update.default <- function(obj, month, day, year, db_con) {
+
   obj <- obj %>%
     etl_extract(...) %>%
     etl_transform(...) %>%
     etl_load(...)
+
   invisible(obj)
+
+
 }
