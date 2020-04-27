@@ -28,3 +28,16 @@ When no arguments are specified all data in the load folder will be uploaded.
 It is important to be aware that \code{etl_load} is written so that duplicate entries
 of data are updated like an upsert.
 }
+\examples{
+
+covid_dat <- etl("covid")
+
+# Extracting, Transforming, and Loading all available data
+
+covid_dat \%>\% etl_extract() \%>\% etl_transform() \%>\% etl_load(db_con = dbconnection)
+
+# Extracting all data, Tranforming data for all of April 2020 and Loading data for the last 5 days of April
+
+covid_dat \%>\% etl_extract() \%>\% etl_transform(month = 4, year = 2020) \%>\% etl_load(db_con = dbconnection, month = 4, days = c(25:30), year = 2020)
+
+}
