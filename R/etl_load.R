@@ -1,9 +1,29 @@
-#' Load Covid-19 Data into PostgreSQL Database
+#' Load COVID-19 Data into PostgreSQL Database
+#' @description \code{etl_load} takes files saved in the \emph{load} folder to
+#' be prepared for loading into a PostgreSQL database. Users must use the db_con
+#' argument to specify a database connection. Users can supply month, day, and year
+#' arguments to load a specific subset of data into their database.
+#' When no arguments are specified all data in the load folder will be uploaded.
+#' It is important to be aware that \code{etl_load} is written so that duplicate entries
+#' of data are updated like an upsert.
 #' @rdname etl_load.etl_covid
 #' @method etl_load etl_covid
 #' @import etl
 #' @import dplyr
+#' @importFrom lubridate ymd month day year
+#' @importFrom readr read_csv
+#' @importFrom purrr set_names map map_chr map_df
+#' @importFrom DBI dbSendQuery
+#' @importFrom plyr rbind.fill
 #' @inheritParams etl::etl_load
+#' @param db_con
+#' A connection to a PostgreSQL database
+#' @param month
+#' numeric vector specifying month(s)
+#' @param day
+#' numeric vector specifying day(s)
+#' @param year
+#' numeric vector specifying year(s)
 #' @export
 
 
@@ -85,24 +105,24 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
   # Pre - Load to have upsert work
 
     # run distinct command
-    transformed_all <- distinct(transformed_all, admin, province_state, country_region, last_update, confirmed, deaths, recovered)
+    transformed_all <- dplyr::distinct(transformed_all, admin, province_state, country_region, last_update, confirmed, deaths, recovered)
 
     # remove observations where confirmed, deaths, recovered are all NA
     transformed_all  <- transformed_all %>%
-      mutate(all_na = ifelse(is.na(confirmed) & is.na(recovered) & is.na(deaths), T, F)) %>%
-      filter(all_na == F ) %>%
-      select(1:7)
+      dplyr::mutate(all_na = ifelse(is.na(confirmed) & is.na(recovered) & is.na(deaths), T, F)) %>%
+      dplyr::filter(all_na == F ) %>%
+      dplyr::select(1:7)
 
     # if last_update is the same but #s differ update to hire numbers
     transformed_all <- transformed_all %>%
-      rowwise() %>%
-      mutate(total_activity = sum(confirmed,
+      dplyr::rowwise() %>%
+      dplyr::mutate(total_activity = sum(confirmed,
                                   recovered,
                                   deaths,
                                   na.rm = T)) %>%
-      group_by(admin, province_state, country_region, last_update) %>%
-      top_n(1, total_activity) %>%
-      select(1:7)
+      dplyr::group_by(admin, province_state, country_region, last_update) %>%
+      dplyr::top_n(1, total_activity) %>%
+      dplyr::select(1:7)
 
   # Apply functions to transform df into SQL statement
 

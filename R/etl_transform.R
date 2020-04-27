@@ -1,11 +1,11 @@
-#' Transform COVID-19 Data to be Uploaded into SQL Database
+#' Transform COVID-19 Data to be Uploaded into PostgreSQL Database
 #' @description \code{etl_transform} takes files saved in the \emph{raw} folder
 #' from \code{etl_extract} and transforms them into usable datasets to be uploaded
 #' into a SQL database. After transformation, files are saved in the \emph{load}
 #' folder within the specified directory or the temp directory if the user did
 #' not specify a directory. Under the hood, \code{etl_transform} cleans datasets
 #' by standardizing colummn names and removing unnecessary punctuation. Most
-#' importantly the the function only selects relevant columns: province/state,
+#' importantly the function only selects relevant columns: province/state,
 #' country/region, last_update, confirmed, deaths, and recovered. Arguments,
 #' such as month, day, and year let users transform data for a specified
 #' time period. When no arguments are specified then all data saved
@@ -25,6 +25,19 @@
 #' numeric vector specifying day(s)
 #' @param year
 #' numeric vector specifying year(s)
+#' @examples
+#'
+#' covid_dat <- etl("covid")
+#'
+#' # Extracting and transforming all data
+#' covid_dat %>% etl_extract() %>% etl_transform()
+#'
+#' # Extracting all data and transforming data only between April 1, 2020  to April 15, 2020
+#' covid_dat %>% etl_extract() %>% etl_transform(month = 4, day = c(1:15), year = 2020)
+#'
+#' # Extracting data for all of April 2020, but only Transforming data for April 25-30th 2020
+#' covid_dat  %>% etl_extract(month = 4, day = c(1:30), year = 2020) %>% etl_transform(month = 4, day = c(25:30), year = 2020)
+#'
 #' @export
 
 etl_transform.etl_covid <- function(obj, month, day, year, ...){

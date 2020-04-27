@@ -29,10 +29,10 @@ directory that was created.
 
 covid_dat <- etl("covid")
 
-covid_dat \%>\% etl_transform()
+covid_dat \%>\% etl_extract()
 
-covid_dat \%>\% etl_transform(month = 4, year = 2020)
+covid_dat \%>\% etl_extract(month = 4, year = 2020)
 
-covid_dat \%>\% etl_transform(month = c(3,4), year = 2020)
+covid_dat \%>\% etl_extract(month = c(3,4), year = 2020)
 
 }

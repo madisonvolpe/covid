@@ -2,15 +2,29 @@
 % Please edit documentation in R/etl_load.R
 \name{etl_load.etl_covid}
 \alias{etl_load.etl_covid}
-\title{Load Covid-19 Data into PostgreSQL Database}
+\title{Load COVID-19 Data into PostgreSQL Database}
 \usage{
 \method{etl_load}{etl_covid}(obj, db_con, month, day, year, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
 
+\item{db_con}{A connection to a PostgreSQL database}
+
+\item{month}{numeric vector specifying month(s)}
+
+\item{day}{numeric vector specifying day(s)}
+
+\item{year}{numeric vector specifying year(s)}
+
 \item{...}{arguments passed to methods}
 }
 \description{
-Load Covid-19 Data into PostgreSQL Database
+\code{etl_load} takes files saved in the \emph{load} folder to
+be prepared for loading into a PostgreSQL database. Users must use the db_con
+argument to specify a database connection. Users can supply month, day, and year
+arguments to load a specific subset of data into their database.
+When no arguments are specified all data in the load folder will be uploaded.
+It is important to be aware that \code{etl_load} is written so that duplicate entries
+of data are updated like an upsert.
 }
