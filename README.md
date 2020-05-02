@@ -42,7 +42,7 @@ Etl_extract, etl_transform, and etl_load basically do what their names suggest, 
 
 *etl_extract* simply captures the COVID-19 daily report data from the repository linked above and saves it into the directory that you specified when creating the etl_covid object. Specifically, when you create the etl_covid object and specify the directory, raw and load folders are created inside the directory. *etl_extract* will extract the daily report data files and save them inside the raw folder. No other modifications are made to the data and each daily report is saved as its own csv inside the raw folder. Additionally, you can fill in month, day, and year arguments to capture data for a specific time period. 
 
-```{r}
+```r
 covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
 covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020)
 
