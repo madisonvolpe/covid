@@ -11,9 +11,9 @@
 etl_update.etl_covid <- function(obj, month, day, year, db_con, ...) {
 
   obj <- obj %>%
-    etl_extract(...) %>%
-    etl_transform(...) %>%
-    etl_load(...)
+    etl_extract(month, day, year, ...) %>%
+    etl_transform(month, day, year, ...) %>%
+    etl_load(db_con, month, day, year, ...)
 
   invisible(obj)
 
