@@ -4,7 +4,7 @@ Extracting, Transforming, and Loading COVID-19 daily report data uploaded by CSS
 The package is built in the etl framework developed by Benjamin Baumer and therefore, is an [etl](https://github.com/beanumber/etl) dependent package. The package includes functions with variations in the default methods for etl_extract,
 etl_transform, and etl_load in order to work with COVID-19 data.
 
-In sum, the covid package extracts the daily report data from [CSSEGISandData's](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports) repository on github. The package then transforms the data to be loaded into a specified PostgreSQL database. 
+In sum, the covid package extracts the daily report data from [CSSEGISandData's](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports) repository on github. The package then transforms the data to be loaded into a specified PostgreSQL database. The package comes with a postgresql init script to create a table inside the database that tracks the following variables: **admin**, **province_state**, **country_region**, **last_update**, **confirmed**, **deaths**, and **recovered**. The sql init script comes with constraints to prevent duplicate data entry, I will cover these constraints more indepth when I discuss the etl_load function. 
 
 To install the package, run the following code in R:
 
