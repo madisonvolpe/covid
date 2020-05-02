@@ -29,15 +29,23 @@ covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/c
 # running etl_extract, etl_transform, etl_load
 covid_data %>% etl_extract() %>% etl_transform() %>% etl_load(db_con = covid_db$con)
 ```
-The above code connects to a postgresql database, creates a covid_data obkect and specifies the object's database and directory, and finally running etl_extract, etl_transform, and etl_load on covid_data will extract all available data from the github repository, transform it, and then load it into the specified postgresql database. 
+The above code connects to a postgresql database, creates an etl_covid object and specifies the directory where data will be stored and the database where data will be loaded. Finally, running etl_extract, etl_transform, and etl_load on covid_data will extract all available data from the github repository, transform it, and then load it into the specified postgresql database. 
 
 ## In-depth Explanations of Functions
 
-## etl_extract
+Etl_extract, etl_transform, and etl_load basically do what their names suggest, however there are 
 
-## etl_transform
+### etl_extract
 
-## etl_load 
+### etl_transform
+
+### etl_load 
+
+### More functions etl_init, etl_update
+
+## Conclusion 
+
+The covid package was written to extract COVID-19 data, transform it into a clean dataset, and load that clean dataset into a postgresql database. Efficiency and usability were important factors kept in mind during *covid's* development. Please check out the vignette .... to see how you can leverage the *covid* package for your data analysis needs. 
 
 
 
