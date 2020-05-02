@@ -14,7 +14,7 @@ devtools::install_github('https://github.com/madisonvolpe/covid')
 
 ## How to Use 
 
-To use the package you must load the **etl** and **covid** packages. After loading the **covid** package, you must create an etl covid object after creating the covid object...you can run the etl_extract, etl_transform, and etl_load functions.
+To use the package you must load the **etl** and **covid** packages. After loading the **covid** package, you must create an etl_covid object after creating the object...you can run the *etl_extract*, *etl_transform*, and *etl_load* functions.
 
 ```r
 library(etl)
@@ -26,10 +26,13 @@ covid_db <- src_postgres(dbname = "covid_db", host = 'localhost', port = 5432,
 # creating covid object
 covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
 
+# creating table inside postgresql database
+covid_data %>% etl_init(schema_name = "init")
+
 # running etl_extract, etl_transform, etl_load
 covid_data %>% etl_extract() %>% etl_transform() %>% etl_load(db_con = covid_db$con)
 ```
-The above code connects to a postgresql database, creates an etl_covid object and specifies the directory where data will be stored and the database where data will be loaded. Finally, running etl_extract, etl_transform, and etl_load on covid_data will extract all available data from the github repository, transform it, and then load it into the specified postgresql database. 
+The above code connects to a postgresql database, creates an etl_covid object that specifies the directory where data will be stored, as well as, the database where data will be loaded. By way of the *etl_init* function, it also creates a table to capture data inside the specified database. Finally, running etl_extract, etl_transform, and etl_load on covid_data will extract all available data from the github repository, transform it, and then load it into the specified postgresql database. 
 
 ## In-depth Explanations of Functions
 
@@ -37,7 +40,7 @@ Etl_extract, etl_transform, and etl_load basically do what their names suggest, 
 
 ### etl_extract
 
-*etl_extract* simply captures the COVID-19 daily report data from the repository linked above and saves it into the directory that you specified when creating the etl_covid object. Specifically, when creating the etl_covid object and specifying the directory, *etl_extract* creates raw and load folders inside the directory. *etl_extract* extracts the daily report data files from the repository and saves them inside the raw folder. No other modifications are made to the data and what you see on github is saved as a csv inside the raw folder. Each daily report is saved as its own csv. Additionally, you can fill in month, day, and year arguments to specify a specific time period of data. 
+*etl_extract* simply captures the COVID-19 daily report data from the repository linked above and saves it into the directory that you specified when creating the etl_covid object. Specifically, when you create the etl_covid object and specify the directory, raw and load folders are created inside the directory. *etl_extract* will extract the daily report data files and save them inside the raw folder. No other modifications are made to the data and each daily report is saved as its own csv inside the raw folder. Additionally, you can fill in month, day, and year arguments to capture data for a specific time period. 
 
 ```{r}
 covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
@@ -47,7 +50,12 @@ covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020)
 # covid_data %>% etl_extract(month = 3, day = 1:31)
 ```
 
+The above code shows that after creating the etl_covid object, covid_data, you can run *etl_extract* on covid_data using the pipe. Specifying, month, day, and year will extract data based on that time period only. In this case, all covid daily reports for March 2020 will be extracted and saved in the raw folder inside the directory ("/Users/madisonvolpe/Documents/covid_data"). After running this code, you would expect to find 31 csvs inside the raw folder. They are saved in the following format: 2020-03-01.csv. 
+
 ### etl_transform
+
+*etl_transform* 
+
 
 ### etl_load 
 
