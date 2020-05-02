@@ -33,9 +33,19 @@ The above code connects to a postgresql database, creates an etl_covid object an
 
 ## In-depth Explanations of Functions
 
-Etl_extract, etl_transform, and etl_load basically do what their names suggest, however there are 
+Etl_extract, etl_transform, and etl_load basically do what their names suggest, however there are arguments you can add to these functions to specify specific subsets of data that you want. Likewise, there is functionality under the hood that should be explained so that you are aware of the data processing behind the scenes. 
 
 ### etl_extract
+
+*etl_extract* simply captures the COVID-19 daily report data from the repository linked above and saves it into the directory that you specified when creating the etl_covid object. Specifically, when creating the etl_covid object and specifying the directory, *etl_extract* creates raw and load folders inside the directory. *etl_extract* extracts the daily report data files from the repository and saves them inside the raw folder. No other modifications are made to the data and what you see on github is saved as a csv inside the raw folder. Each daily report is saved as its own csv. Additionally, you can fill in month, day, and year arguments to specify a specific time period of data. 
+
+```{r}
+covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
+covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020)
+
+# technically this is the same, bc there is no other years of data: 
+# covid_data %>% etl_extract(month = 3, day = 1:31)
+```
 
 ### etl_transform
 
