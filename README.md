@@ -54,7 +54,7 @@ The above code shows that after creating the etl_covid object, covid_data, you c
 
 ### etl_transform
 
-*etl_transform* 
+*etl_transform* will take the data 
 
 
 ### etl_load 
