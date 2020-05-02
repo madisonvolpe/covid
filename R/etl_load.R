@@ -50,7 +50,7 @@ etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 
     if(lubridate::ymd(str_extract(files[i], "\\d{4}\\-\\d{2}\\-\\d{2}")) < lubridate::ymd("2020-03-22")){
 
-      transformed_dfs[[i]] <- readr::read_csv(files[i], col_types = cols(col_character(), col_character(),
+      transformed_dfs[[i]] <- readr::read_csv(files[i], col_types = readr::cols(col_character(), col_character(),
                                                                          col_character(), col_integer(),
                                                                          col_integer(), col_integer()))
 
