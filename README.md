@@ -60,7 +60,7 @@ The above code shows that after creating the etl_covid object, covid_data, you c
 covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
 covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020) %>% etl_transform(month = 3, day = 1:5, year = 2020) 
 ```
-After creating the etl_covid object, and running *etl_extract* on it, we are left with 31 csvs for the month of March in the raw directory. *etl_transform* will read in the data from the raw directory, transform it using the cleaning methods described above and then save the cleaned csvs into the load directory. The transformed csvs are saved in the following format: 2020-03-05.csv. Because we specified month, day, and year parameters, only 5 csvs will be saved into the laod directory because we specified that we only wanted to clean data for the first 5 days in march. 
+After creating the etl_covid object, and running *etl_extract* on it, we are left with 31 csvs for the month of March in the raw directory. *etl_transform* will read in the data from the raw directory, transform it using the cleaning methods described above and then save the cleaned csvs into the load directory. The transformed csvs are saved in the following format: 2020-03-05.csv. Because we specified month, day, and year parameters, only 5 csvs will be saved into the load directory because we specified that we only wanted to clean data for the first 5 days in march. 
 
 ### etl_load 
 
