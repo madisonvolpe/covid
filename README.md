@@ -54,8 +54,13 @@ The above code shows that after creating the etl_covid object, covid_data, you c
 
 ### etl_transform
 
-*etl_transform* will take the data 
+*etl_transform* will take the data saved in the raw folder and transform it in order to be loaded into the specified database. Transform cleans data and only keeps relevant columns. Under the hood, *etl_transform* takes the specified csvs in the raw folder, reads them into R and then applies cleaning procedures. The cleaning procedures include: cleaning column names to be in snake_case and to be easily used inside a postgresel database, cleaning the date/time (last_update) column so that the formatting is standardized across all observations, removing any unnecessary punctuation inside text variables, and finally selecting only relevant columns (**admin, province_state, country_region, last_update, confirmed, deaths, recovered**).
 
+```r
+covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
+covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020) %>% etl_transform(month = 3, day = 1:5, year = 2020) 
+```
+After creating the etl_covid object, and running *etl_extract* on it, we are left with 31 csvs for the month of March in the raw directory. *etl_transform* will read in the data from the raw directory, transform it using the cleaning methods described above and then save the cleaned csvs into the load directory. The transformed csvs are saved in the following format: 2020-03-05.csv. Because we specified month, day, and year parameters, only 5 csvs will be saved into the laod directory because we specified that we only wanted to clean data for the first 5 days in march. 
 
 ### etl_load 
 
