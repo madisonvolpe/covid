@@ -1,0 +1,64 @@
+---
+title: "covid_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{covid_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tidyverse)
+library(etl)
+library(covid)
+```
+
+## Uses of covid package 
+
+The covid package is constructed so that it can be used to suit the varying needs of analysts. Below is a list of some of the most common uses I will highlight each use with an example. 
+
+1. Download data and update database daily
+2. One time download 
+3. Extracting certain time periods
+4. Use without database 
+
+### Download data and update database daily 
+
+In this scenario, you will have an initial download of data and upload into a database then you would want to update your database daily. In order to achieve this, first create a postgresql database then connect to the database using the *src_postgres* command. After create an *etl_covid* object with the *etl* function specifying the database, as well as the directory where the raw and load folders will be created to store files. After, run the *etl_init* function to create a *covid_stats* table inside your database (Refer to the readme to see how the sql script was created). Finally, to initially download all data in the CSSEGISandData daily reports repository, simply run the pipeline: etl_extract %>% etl_transform %>% etl_load on the *etl_covid* object. By not specifying any of the date parameters (month, day, year) all data from the repository will be extracted, transformed, and loaded into the *covid_stats* table in the specified database. 
+
+```{r daily update}
+covid_daily_db <- src_postgres(dbname = "covid_daily", host = 'localhost', port = 5432,
+                         user = Sys.getenv("user"), password = Sys.getenv("password"))
+
+covid_daily <- etl("covid", db = covid_daily_db, directory = "/Users/madisonvolpe/Desktop/covid_daily")
+
+covid_daily %>% etl_init(schema_name = "init")
+
+covid_daily %>% etl_extract() %>% etl_transform() %>% etl_load(covid_daily_db$con)
+```
+
+After your initial download, you can revisit the script. Now instead of running etl_extract, etl_transform, and etl_load you simply have to run etl_update. You can then include the month, day, and year parameters to extract data for the next day(s). In this case, I find that using the *today()* function from the lubridate package is helpful. If, for example, you download all the covid data on May 6th, depending on when you ran the script, you would probably only be able to get data up until May 5th. Therefore, on the next day, May 7th, you can use today() - 1 to get data for May 6th. Using etl_update will allow you to update your database daily.
+
+```{r}
+covid_daily_db <- src_postgres(dbname = "covid_daily", host = 'localhost', port = 5432,
+                         user = Sys.getenv("user"), password = Sys.getenv("password"))
+
+covid_daily <- etl("covid", db = covid_daily_db, directory = "/Users/madisonvolpe/Desktop/covid_daily")
+
+# covid_daily %>% etl_init(schema_name = "init")
+# covid_daily %>% etl_extract() %>% etl_transform() %>% etl_load(covid_daily_db$con)
+
+ref_date<- lubridate::today()
+
+covid_daily %>% etl_update(month = lubridate::month(ref_date), 
+                           day = lubridate::day(ref_date) - 1, 
+                           year = 2020,
+                           db_con = covid_daily_db$con)
+```
