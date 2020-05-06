@@ -85,9 +85,40 @@ The above code shows that after creating the covid_data object and running *etl_
 
 ### More functions etl_init, etl_update
 
+*etl_init* from Benjamin Baumer's [etl](https://github.com/beanumber/etl) package will run the postgresql script that will create the covid_stats table inside your specified postgresql database. This is what is being created, you can see the unique constraint on admin, province_state, country_region, and last_update described above. 
+
+```sql
+DROP TABLE IF EXISTS covid_stats;
+
+CREATE TABLE covid_stats(
+admin text NOT NULL,
+province_state text NOT NULL,
+country_region text NOT NULL,
+last_update timestamp NOT NULL,
+confirmed numeric,
+deaths numeric,
+recovered numeric,
+UNIQUE(admin, province_state, country_region, last_update)
+);
+
+```
+*etl_update*, again from Benjamin Baumer's etl package, allows you to run one line of code that automatically performs the etl_extract, etl_transform, and etl_load pipeline. *etl_update* is useful when you want to add data to an already populated database.  
+
+```r
+# initial download [downloaded data up until may 4th] 
+
+covid_data %>% etl_extract() %>% etl_transform %>% etl_load(db_con = covid_db$con)
+
+# etl update [next day]
+
+covid_data %>% etl_update(month = 5, day = 5, year = 2020, db_Con = covid_db$con)
+```
+
+For example, let's say you run the initial pipe on May 5th, which will get you all data up until May 4th. The next day instead of having to write the entire pipe, you can run *etl_update* with month, day, and year arguments. It will supply these arguments to *etl_extract*, *etl_transform*, and *etl_load* so only data for May 5th is extracted, transformed, and loaded into the specified database. This allows you to update your database daily :smile:
+
 ## Conclusion 
 
-The covid package was written to extract COVID-19 data, transform it into a clean dataset, and load that clean dataset into a postgresql database. Efficiency and usability were important factors kept in mind during *covid's* development. Please check out the vignette .... to see how you can leverage the *covid* package for your data analysis needs. 
+The covid package was written to extract COVID-19 data, transform it into a clean dataset, and load that clean dataset into a postgresql database. Efficiency and usability were important factors kept in mind during *covid's* development. Please check out the vignette to see how you can leverage the *covid* package for your data analysis needs. 
 
 
 
