@@ -36,7 +36,7 @@ The above code connects to a postgresql database, creates an etl_covid object th
 
 ## In-depth Explanations of Functions
 
-Etl_extract, etl_transform, and etl_load basically do what their names suggest, however there are arguments you can add to these functions to specify specific subsets of data that you want. Likewise, there is functionality under the hood that should be explained so that you are aware of the data processing behind the scenes. 
+etl_extract, etl_transform, and etl_load basically do what their names suggest, however there are arguments you can add to these functions to specify specific subsets of data that you want. Likewise, there is functionality under the hood that should be explained so that you are aware of the data processing behind the scenes. 
 
 ### etl_extract
 
@@ -54,15 +54,34 @@ The above code shows that after creating the etl_covid object, covid_data, you c
 
 ### etl_transform
 
-*etl_transform* will take the data saved in the raw folder and transform it in order to be loaded into the specified database. Transform cleans data and only keeps relevant columns. Under the hood, *etl_transform* takes the specified csvs in the raw folder, reads them into R and then applies cleaning procedures. The cleaning procedures include: cleaning column names to be in snake_case and to be easily used inside a postgresel database, cleaning the date/time (last_update) column so that the formatting is standardized across all observations, removing any unnecessary punctuation inside text variables, and finally selecting only relevant columns (**admin, province_state, country_region, last_update, confirmed, deaths, recovered**).
+*etl_transform* will take the data saved in the raw folder and transform it in order to be loaded into the specified database. Transform cleans data and only keeps relevant columns. Under the hood, *etl_transform* takes the specified csvs in the raw folder, reads them into R and then applies cleaning procedures. The cleaning procedures include: cleaning column names to be in snake_case, cleaning the date/time (last_update) column so that the formatting is standardized across all observations, removing any unnecessary punctuation inside character variables, and finally selecting only relevant columns (**admin, province_state, country_region, last_update, confirmed, deaths, recovered**).
 
 ```r
 covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
 covid_data %>% etl_extract(month = 3, day = 1:31, year = 2020) %>% etl_transform(month = 3, day = 1:5, year = 2020) 
 ```
-After creating the etl_covid object, and running *etl_extract* on it, we are left with 31 csvs for the month of March in the raw directory. *etl_transform* will read in the data from the raw directory, transform it using the cleaning methods described above and then save the cleaned csvs into the load directory. The transformed csvs are saved in the following format: 2020-03-05.csv. Because we specified month, day, and year parameters, only 5 csvs will be saved into the load directory because we specified that we only wanted to clean data for the first 5 days in march. 
+After creating the etl_covid object, and running *etl_extract* on it, we are left with 31 csvs for the month of March in the raw directory. *etl_transform* will read in the data from the raw directory, transform it using the cleaning methods described above and then save the cleaned csvs into the load folder. The transformed csvs are saved in the following format: 2020-03-05.csv. Because we specified month, day, and year parameters, only 5 csvs will be saved into the load directory because we specified that we only wanted to clean data for the first 5 days in March. 
 
 ### etl_load 
+
+*etl_load* reads in the transformed csvs from the load folder and manipulates them to be uploaded to the postgresql database that the user specified. Under the hood, prior to uploading the data into the database, *etl_load* performs some operations to create an accurate and efficient database. First, any duplicate values are removed so that only distinct values remain. Second, rows where the original data had NA values for all confirmed, recovered, and deaths are removed. Finally, there were some cases in the original data files from CSSEGISandData, where the last_update column for province_state & country_region had two different sets of values for confirmed, recovered, and deaths. For example, in the table below, we can see that on 3-14-2020 20:13:16, there are two different sets of data for Italy. This is but one example, because in actuality there are many more like this, especially for 3-14-2020. In this case,  before uploading into the database, *etl_load* will keep observations for last_update that have the highest summed value of confirmed, deaths, and recovered. In this case, the second row from the table below is kept, while the first row is discarded. This is done in order to only have one set of values for each last_update time interval. 
+
+| admin | province_state | country_region | last_update        | confirmed | deaths | recovered |
+|-------|----------------|----------------|--------------------|-----------|--------|-----------|
+|  NA   |      NA        |     Italy      | 3-14-2020 20:13:16 |  21187    |  1441  |   1966    |
+|  NA   |      NA        |     Italy      | 3-14-2020 20:13:16 |  24747    |  1809  |   2535    |
+
+After performing these final steps, described above, the *etl_load* function is written as a SQL upsert so that you can continually update your database without adding duplicate values. In this case, there is a UNIQUE constraint on admin, province_state, country_region, and last_update. If there is a conflict then the confirmed, deaths, and recovered columns are updated to match the new data being uploaded. 
+
+```r
+covid_data <- etl("covid", db = covid_db, dir = "/Users/madisonvolpe/Documents/covid_data")
+
+covid_data %>% 
+  etl_extract(month = 3, day = 1:31, year = 2020) %>% 
+  etl_transform(month = 3, day = 1:5, year = 2020) %>% 
+  etl_load(db_con = covid_db$con)
+```
+The above code shows that after creating the covid_data object and running *etl_extract* and *etl_transform* on the object, you can pipe in *etl_load*. Be sure to add the database connection and then the data will be uploaded to your postgresql database. In sum *etl_load*, will read in the files stored in the load folder and modify them before directly uploading them to the database. In this case, only data from March 1st to March 5th will be added to your database because these are the only five files saved into the load folder after running *etl_transform*.
 
 ### More functions etl_init, etl_update
 
