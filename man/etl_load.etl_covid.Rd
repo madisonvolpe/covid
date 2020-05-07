@@ -26,7 +26,7 @@ argument to specify a database connection. Users can supply month, day, and year
 arguments to load a specific subset of data into their database.
 When no arguments are specified all data in the load folder will be uploaded.
 It is important to be aware that \code{etl_load} is written so that duplicate entries
-of data are updated like an upsert.
+of data are updated like a SQL upsert.
 }
 \examples{
 

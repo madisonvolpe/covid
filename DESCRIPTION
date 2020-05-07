@@ -18,7 +18,10 @@ Imports:
     purrr,
     lubridate,
     stringr,
-    plyr
+    plyr,
+    readr,
+    xml2,
+    DBI
 RoxygenNote: 7.1.0
 Suggests: 
     knitr,
