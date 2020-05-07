@@ -15,8 +15,11 @@ Imports:
     dplyr,
     etl,
     rvest,
+    purrr
 RoxygenNote: 7.1.0
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    lubridate,
+    stringr
 VignetteBuilder: knitr
