@@ -9,8 +9,20 @@
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
 
+\item{month}{numeric vector specifying month(s)}
+
+\item{day}{numeric vector specifying day(s)}
+
+\item{year}{numeric vector specifying year(s)}
+
+\item{db_con}{a conenction to a PostgreSQL database}
+
 \item{...}{arguments passed to methods}
 }
 \description{
-Update Database in Single Step: Extract, Transform, + Load
+\emph{etl_update} performs the etl_extract, etl_transform, and etl_load pipe
+in a single step. You must supply the db_con argument in order to load
+data into a specfied Postgresql database. You can also supply month, day,
+and year arguments to limit the extract, transform, and load of data for
+a specified time period
 }
