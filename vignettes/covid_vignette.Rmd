@@ -31,9 +31,9 @@ The covid package is constructed so that it can be used to suit the varying need
 
 ### Download data and update database daily 
 
-In this scenario, you will have an initial download of data and upload into a database then you would want to update your database daily. In order to achieve this, first create a postgresql database then connect to the database using the *src_postgres* command. After create an *etl_covid* object with the *etl* function specifying the database, as well as the directory where the raw and load folders will be created to store files. After, run the *etl_init* function to create a *covid_stats* table inside your database (Refer to the readme to see how the sql script was created). Finally, to initially download all data in the CSSEGISandData daily reports repository, simply run the pipeline: etl_extract %>% etl_transform %>% etl_load on the *etl_covid* object. By not specifying any of the date parameters (month, day, year) all data from the repository will be extracted, transformed, and loaded into the *covid_stats* table in the specified database. 
+In this scenario, you will have an initial download and upload of data into a database then you would want to update your database daily. In order to achieve this, first create a postgresql database then connect to the database using the *src_postgres* command. After create an *etl_covid* object with the *etl* function specifying the database, as well as the directory where the raw and load folders will be created to store files. After, run the *etl_init* function to create a *covid_stats* table inside your database (Refer to the readme to see how the sql script was created). Finally, to initially download all data in the CSSEGISandData daily reports repository, simply run the pipeline: etl_extract %>% etl_transform %>% etl_load on the *etl_covid* object. By not specifying any of the date parameters (month, day, year) all data from the repository will be extracted, transformed, and loaded into the *covid_stats* table in the specified database. 
 
-```{r daily update}
+```{r eval = FALSE}
 covid_daily_db <- src_postgres(dbname = "covid_daily", host = 'localhost', port = 5432,
                          user = Sys.getenv("user"), password = Sys.getenv("password"))
 
@@ -41,12 +41,12 @@ covid_daily <- etl("covid", db = covid_daily_db, directory = "/Users/madisonvolp
 
 covid_daily %>% etl_init(schema_name = "init")
 
-covid_daily %>% etl_extract() %>% etl_transform() %>% etl_load(covid_daily_db$con)
+covid_daily %>% etl_extract() %>% etl_transform() %>% etl_load(db_con= covid_daily_db$con)
 ```
 
-After your initial download, you can revisit the script. Now instead of running etl_extract, etl_transform, and etl_load you simply have to run etl_update. You can then include the month, day, and year parameters to extract data for the next day(s). In this case, I find that using the *today()* function from the lubridate package is helpful. If, for example, you download all the covid data on May 6th, depending on when you ran the script, you would probably only be able to get data up until May 5th. Therefore, on the next day, May 7th, you can use today() - 1 to get data for May 6th. Using etl_update will allow you to update your database daily.
+After your initial download, you can revisit the script. Now, instead of running etl_extract, etl_transform, and etl_load you simply have to run etl_update. You can then include the month, day, and year parameters to extract data for the next day(s). In this case, I find that using the *today()* function from the lubridate package is helpful. If, for example, you download all the covid data on May 6th, depending on when you ran the script, you would probably only be able to get data up until May 5th. Therefore, on the next day, May 7th, you can use today() - 1 to get data for May 6th. Using etl_update will allow you to update your database daily.
 
-```{r}
+```{r eval = FALSE}
 covid_daily_db <- src_postgres(dbname = "covid_daily", host = 'localhost', port = 5432,
                          user = Sys.getenv("user"), password = Sys.getenv("password"))
 
@@ -61,4 +61,53 @@ covid_daily %>% etl_update(month = lubridate::month(ref_date),
                            day = lubridate::day(ref_date) - 1, 
                            year = 2020,
                            db_con = covid_daily_db$con)
+```
+
+### One time download 
+
+If you wanted to do a one time download, you simply have to run etl_extract, etl_transform, and etl_load without specifying any date parameters. Doing this will download all the data available and upload it to your database. 
+
+```{r eval = FALSE}
+covid_all_db <- src_postgres(dbname = "covid_all", host = 'localhost', port = 5432,
+                         user = Sys.getenv("user"), password = Sys.getenv("password"))
+
+covid_all <- etl("covid", db = covid_all_db, directory = "/Users/madisonvolpe/Desktop/covid_all")
+
+covid_all %>% etl_init(schema_name = "init")
+
+covid_all %>% etl_extract() %>% etl_transform() %>% etl_load(db_con = covid_all_db$con)
+```
+
+### Extracting certain time periods
+
+Each function (etl_extract, etl_transform, and etl_load) comes with the ability to specify date parameters: month, day, and year. Specifying parameters will modify the time period of data you are performing operations on. 
+
+```{r eval = FALSE}
+covid_time_db <- src_postgres(dbname = "covid_time", host = 'localhost', port = 5432,
+                         user = Sys.getenv("user"), password = Sys.getenv("password"))
+
+covid_time <- etl("covid", db = covid_all_db, directory = "/Users/madisonvolpe/Desktop/covid_time")
+
+covid_time %>% etl_init(schema_name = "init")
+
+covid_time %>% 
+  etl_extract(month = c(3,4)) %>% 
+  etl_transform(month = 4) %>%
+  etl_load(month = 4, day = c(1:15), db_con = covid_time_db$con)
+``` 
+
+In this case, we are extracting all data for March and April. In the raw folder, created within the directory, you will only see March and April csvs. Then we are only transforming data for April, so in the load folder we will only see April csvs. Finally, we are only loading data for the first 15 days of April into the database. Ultimately, the date parameters provide flexibility for your etl framework. 
+
+### Use without a database 
+
+When creating the etl_covid object, technically, you do not have to specify a database or even specify a working directory. By running this code, a sqlite database is created for you. Likewise, a folder is created in a temp directory. 
+
+```{r}
+covid_data <- etl("covid")
+```
+
+However, I do advise you to at least specify a working directory so that you can easily manipulate the csvs to your liking. Without specifying a database, you can still access data in the raw and load folders. If you run etl_extract, the data downloaded will appear in the raw folder and you can access the raw data and manipulate it how you want. Likewise, if you run etl_transform, the clean data will still be there for you to manipulate. 
+
+```{r}
+covid_data <- etl("covid", directory = "/Users/madisonvolpe/Desktop/covid")
 ```
