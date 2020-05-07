@@ -5,7 +5,7 @@
 #' folder within the specified directory or the temp directory if the user did
 #' not specify a directory. Under the hood, \code{etl_transform} cleans datasets
 #' by standardizing colummn names and removing unnecessary punctuation. Most
-#' importantly the function only selects relevant columns: province/state,
+#' importantly the function only selects relevant columns: admin, province/state,
 #' country/region, last_update, confirmed, deaths, and recovered. Arguments,
 #' such as month, day, and year let users transform data for a specified
 #' time period. When no arguments are specified then all data saved

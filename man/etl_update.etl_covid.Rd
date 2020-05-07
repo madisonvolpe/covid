@@ -4,10 +4,12 @@
 \alias{etl_update.etl_covid}
 \title{Update Database in Single Step: Extract, Transform, + Load}
 \usage{
-\method{etl_update}{etl_covid}(obj, month, day, year, db_con)
+\method{etl_update}{etl_covid}(obj, month, day, year, db_con, ...)
 }
 \arguments{
 \item{obj}{an \code{\link[etl]{etl}} object}
+
+\item{...}{arguments passed to methods}
 }
 \description{
 Update Database in Single Step: Extract, Transform, + Load
