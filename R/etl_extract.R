@@ -1,3 +1,4 @@
+globalVariables(c(".", "link", "link_date"))
 #' Scrape COVID-19 Daily Reports from Github
 #' @description \code{etl_extract} obtains COVID-19 daily reports uploaded by CSSEGISandData on Github.
 #' Arguments, such as month, day, and year let users obtain data for a specified time period.
@@ -5,6 +6,7 @@
 #' datsets are then saved as csvs in the \emph{raw} folder within the directory that the user specified.
 #' If no directory was specified then the files are saved in the \emph{raw} folder within the temp
 #' directory that was created.
+#' @inheritParams etl::etl_extract
 #' @rdname etl_extract.etl_covid
 #' @method etl_extract etl_covid
 #' @import etl
@@ -15,24 +17,20 @@
 #' @importFrom  rvest html_nodes html_attr
 #' @importFrom stringr str_extract
 #' @importFrom  xml2 read_html
-#' @inheritParams etl::etl_extract
+#' @importFrom utils head
 #' @param month
 #' numeric vector specifying month(s)
 #' @param day
 #' numeric vector specifying day(s)
 #' @param year
 #' numeric vector specifying year(s)
-#' @examples
-#'
-#' covid_dat <- etl("covid")
-#'
-#' covid_dat %>% etl_extract()
-#'
-#' covid_dat %>% etl_extract(month = 4, year = 2020)
-#'
-#' covid_dat %>% etl_extract(month = c(3,4), year = 2020)
-#'
 #' @export
+#' @examples
+#' covid_dat <- etl::etl("covid")
+#' \dontrun{
+#' covid_dat %>%
+#' etl_extract(month = 4, day = 1:2, year = 2020)
+#' }
 
 etl_extract.etl_covid <- function(obj, month, day, year, ...) {
 

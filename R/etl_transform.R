@@ -1,3 +1,4 @@
+globalVariables(c("admin", "province_state","country_region", "last_update", "confirmed", "deaths", "recovered"))
 #' Transform COVID-19 Data to be Uploaded into PostgreSQL Database
 #' @description \code{etl_transform} takes files saved in the \emph{raw} folder
 #' from \code{etl_extract} and transforms them into usable datasets to be uploaded
@@ -25,19 +26,15 @@
 #' numeric vector specifying day(s)
 #' @param year
 #' numeric vector specifying year(s)
+#' @export
 #' @examples
 #'
-#' covid_dat <- etl("covid")
-#'
-#' # Extracting and transforming all data
-#' covid_dat %>% etl_extract() %>% etl_transform()
-#'
-#' # Extracting all data and transforming data only between April 1, 2020  to April 15, 2020
-#' covid_dat %>% etl_extract() %>% etl_transform(month = 4, day = c(1:15), year = 2020)
-#'
-#' # Extracting data for all of April 2020, but only Transforming data for April 25-30th 2020
-#' covid_dat  %>% etl_extract(month = 4, day = c(1:30), year = 2020) %>% etl_transform(month = 4, day = c(25:30), year = 2020)
-#'
+#' covid_dat <- etl::etl("covid")
+#'\dontrun{
+#' covid_dat %>%
+#' etl_extract() %>%
+#' etl_transform(month = 4, day = c(1:15), year = 2020)
+#'}
 #' @export
 
 etl_transform.etl_covid <- function(obj, month, day, year, ...){

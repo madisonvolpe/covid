@@ -1,3 +1,4 @@
+globalVariables(c("all_na", "total_activity"))
 #' Load COVID-19 Data into PostgreSQL Database
 #' @description \code{etl_load} takes files saved in the \emph{load} folder to
 #' be prepared for loading into a PostgreSQL database. Users must use the db_con
@@ -15,6 +16,7 @@
 #' @importFrom purrr set_names map map_chr map_df
 #' @importFrom DBI dbSendQuery
 #' @importFrom plyr rbind.fill
+#' @importFrom readr cols col_character col_integer
 #' @inheritParams etl::etl_load
 #' @param db_con
 #' A connection to a PostgreSQL database
@@ -24,20 +26,7 @@
 #' numeric vector specifying day(s)
 #' @param year
 #' numeric vector specifying year(s)
-#' @examples
-#'
-#' covid_dat <- etl("covid")
-#'
-#' # Extracting, Transforming, and Loading all available data
-#'
-#' covid_dat %>% etl_extract() %>% etl_transform() %>% etl_load(db_con = dbconnection)
-#'
-#' # Extracting all data, Tranforming data for all of April 2020 and Loading data for the last 5 days of April
-#'
-#' covid_dat %>% etl_extract() %>% etl_transform(month = 4, year = 2020) %>% etl_load(db_con = dbconnection, month = 4, days = c(25:30), year = 2020)
-#'
 #' @export
-
 
 etl_load.etl_covid <- function(obj, db_con, month, day, year, ...){
 

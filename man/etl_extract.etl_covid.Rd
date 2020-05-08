@@ -26,13 +26,9 @@ If no directory was specified then the files are saved in the \emph{raw} folder 
 directory that was created.
 }
 \examples{
-
-covid_dat <- etl("covid")
-
-covid_dat \%>\% etl_extract()
-
-covid_dat \%>\% etl_extract(month = 4, year = 2020)
-
-covid_dat \%>\% etl_extract(month = c(3,4), year = 2020)
-
+covid_dat <- etl::etl("covid")
+\dontrun{
+covid_dat \%>\%
+etl_extract(month = 4, day = 1:2, year = 2020)
+}
 }
